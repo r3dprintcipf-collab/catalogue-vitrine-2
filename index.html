@@ -10,45 +10,41 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap');
         body { font-family: 'Inter', sans-serif; background-color: #ffffff; }
-        /* Masquer la scrollbar des filtres sur mobile pour un look propre */
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
     </style>
 </head>
 <body class="pb-20">
 
-    <!-- Navigation unique en haut -->
+    <!-- Navigation épurée -->
     <nav class="sticky top-0 bg-white/95 backdrop-blur-sm border-b border-gray-100 z-50">
-        <div class="max-w-5xl mx-auto px-6 py-4 flex flex-col sm:flex-row items-center justify-between gap-4">
-            <h1 class="text-xl font-bold tracking-tighter uppercase">PrintDesign.ci</h1>
-            <div class="flex items-center gap-3 w-full sm:w-auto justify-end">
-                <button onclick="openGuide()" class="bg-gray-100 hover:bg-black hover:text-white transition px-4 py-1.5 rounded-full text-xs font-semibold uppercase tracking-wider">
-                    💡 Quel filament choisir ?
+        <div class="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between gap-3">
+            <h1 class="text-lg font-bold tracking-tighter uppercase">PrintDesign.ci</h1>
+            <div class="flex items-center gap-2">
+                <button onclick="openGuide()" class="bg-gray-100 hover:bg-black hover:text-white transition px-3 py-1.5 rounded-full text-[11px] font-semibold uppercase tracking-wider whitespace-nowrap">
+                    💡 Guide
                 </button>
-                <input type="text" id="search" placeholder="Rechercher..." class="bg-gray-50 border-0 rounded-full px-4 py-1.5 text-sm w-32 sm:w-56 focus:ring-2 focus:ring-black outline-none">
+                <input type="text" id="search" placeholder="Rechercher..." class="bg-gray-50 border border-gray-100 rounded-full px-3 py-1.5 text-xs w-28 sm:w-56 focus:ring-2 focus:ring-black outline-none">
             </div>
         </div>
     </nav>
 
-    <!-- En-tête de confiance / Localisation Abidjan -->
-    <div class="bg-gray-50 border-b border-gray-100 py-3 px-6">
-        <div class="max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-between text-xs text-gray-500 gap-2">
-            <span>📍 Basé à Abidjan, Côte d'Ivoire — Matériel d'impression 3D</span>
-            <span class="font-medium text-black">Besoin d'un conseil ? Utilisez le guide des filaments ci-dessus ↗</span>
-        </div>
-    </div>
-
-    <!-- Filtres rapides par catégories (Chips) -->
-    <div class="max-w-5xl mx-auto px-6 mt-8">
-        <div id="filterChips" class="flex items-center gap-2 overflow-x-auto no-scrollbar pb-2">
-            <button onclick="filterCat('tous')" class="chip-btn active bg-black text-white px-4 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition">Tous les produits</button>
-            <!-- Les autres boutons de filtres s'ajouteront tout seul -->
+    <!-- Filtres rapides par catégories (Chips) remontés pour un accès direct -->
+    <div class="max-w-5xl mx-auto px-4 mt-4">
+        <div id="filterChips" class="flex items-center gap-2 overflow-x-auto no-scrollbar pb-1">
+            <button onclick="filterCat('tous')" class="chip-btn active bg-black text-white px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition">Tous</button>
         </div>
     </div>
 
     <!-- Contenu principal -->
-    <main id="mainContent" class="max-w-5xl mx-auto px-6 py-8 space-y-16">
+    <main id="mainContent" class="max-w-5xl mx-auto px-4 py-6 space-y-12">
     </main>
+
+    <!-- Pied de page propre contenant la localisation (sortie du haut de page) -->
+    <footer class="max-w-5xl mx-auto px-4 mt-16 pt-8 border-t border-gray-100 text-center text-xs text-gray-400 space-y-2">
+        <p>📍 Basé à Abidjan, Côte d'Ivoire — Matériel & Consommables d'impression 3D</p>
+        <p class="font-medium text-gray-600">PrintDesign.ci © 2026 — Tous droits réservés</p>
+    </footer>
 
     <!-- Fenêtre modale du Guide d'achat -->
     <div id="guideModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
@@ -108,7 +104,7 @@
 
             sorted.forEach(cat => {
                 const btn = document.createElement('button');
-                btn.className = "chip-btn bg-gray-100 text-gray-700 hover:bg-gray-200 px-4 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition uppercase";
+                btn.className = "chip-btn bg-gray-100 text-gray-700 hover:bg-gray-200 px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition uppercase";
                 btn.textContent = cat;
                 btn.onclick = () => filterCat(cat);
                 container.appendChild(btn);
@@ -119,9 +115,9 @@
             currentFilter = cat;
             document.querySelectorAll('.chip-btn').forEach(b => {
                 if((cat === 'tous' && b.textContent.includes('Tous')) || b.textContent.toLowerCase() === cat) {
-                    b.className = "chip-btn active bg-black text-white px-4 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition uppercase";
+                    b.className = "chip-btn active bg-black text-white px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition uppercase";
                 } else {
-                    b.className = "chip-btn bg-gray-100 text-gray-700 hover:bg-gray-200 px-4 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition uppercase";
+                    b.className = "chip-btn bg-gray-100 text-gray-700 hover:bg-gray-200 px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition uppercase";
                 }
             });
 
@@ -147,17 +143,17 @@
 
                 const section = document.createElement('section');
                 section.innerHTML = `
-                    <h2 class="text-2xl font-bold mb-8 border-l-4 border-black pl-4 uppercase tracking-wider">${cat}</h2>
-                    <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+                    <h2 class="text-xl font-bold mb-6 border-l-4 border-black pl-3 uppercase tracking-wider">${cat}</h2>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
                         ${products.map(p => `
                             <div class="group cursor-pointer relative">
-                                ${p.tag ? `<span class="absolute top-3 left-3 bg-black text-white text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider z-10">${p.tag}</span>` : ''}
-                                <div class="aspect-square bg-gray-100 rounded-2xl overflow-hidden mb-3">
+                                ${p.tag ? `<span class="absolute top-2 left-2 bg-black text-white text-[9px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider z-10">${p.tag}</span>` : ''}
+                                <div class="aspect-square bg-gray-100 rounded-2xl overflow-hidden mb-2">
                                     <img src="${p.image}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" onerror="this.src='https://images.unsplash.com/photo-1581091226825-a6a2a5aee158'">
                                 </div>
-                                <h3 class="text-sm font-medium truncate">${p.nom}</h3>
-                                <p class="text-xs text-gray-400">${p.couleur || 'Standard'}</p>
-                                <p class="text-sm font-semibold mt-1">${p.prix}</p>
+                                <h3 class="text-xs sm:text-sm font-medium truncate">${p.nom}</h3>
+                                <p class="text-[11px] text-gray-400">${p.couleur || 'Standard'}</p>
+                                <p class="text-xs sm:text-sm font-semibold mt-0.5">${p.prix}</p>
                             </div>
                         `).join('')}
                     </div>
@@ -170,17 +166,17 @@
             const main = document.getElementById('mainContent');
             main.innerHTML = `
                 <section>
-                    <h2 class="text-2xl font-bold mb-8 border-l-4 border-black pl-4 uppercase tracking-wider">${catName}</h2>
-                    <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+                    <h2 class="text-xl font-bold mb-6 border-l-4 border-black pl-3 uppercase tracking-wider">${catName}</h2>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
                         ${products.map(p => `
                             <div class="group cursor-pointer relative">
-                                ${p.tag ? `<span class="absolute top-3 left-3 bg-black text-white text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider z-10">${p.tag}</span>` : ''}
-                                <div class="aspect-square bg-gray-100 rounded-2xl overflow-hidden mb-3">
+                                ${p.tag ? `<span class="absolute top-2 left-2 bg-black text-white text-[9px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider z-10">${p.tag}</span>` : ''}
+                                <div class="aspect-square bg-gray-100 rounded-2xl overflow-hidden mb-2">
                                     <img src="${p.image}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" onerror="this.src='https://images.unsplash.com/photo-1581091226825-a6a2a5aee158'">
                                 </div>
-                                <h3 class="text-sm font-medium truncate">${p.nom}</h3>
-                                <p class="text-xs text-gray-400">${p.couleur || 'Standard'}</p>
-                                <p class="text-sm font-semibold mt-1">${p.prix}</p>
+                                <h3 class="text-xs sm:text-sm font-medium truncate">${p.nom}</h3>
+                                <p class="text-[11px] text-gray-400">${p.couleur || 'Standard'}</p>
+                                <p class="text-xs sm:text-sm font-semibold mt-0.5">${p.prix}</p>
                             </div>
                         `).join('')}
                     </div>
