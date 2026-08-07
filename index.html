@@ -3,12 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PRINTDESIGN.CI | Catalogue</title>
+    <title>PRINTDESIGN.CI | Catalogue de Filaments & Imprimantes 3D à Abidjan</title>
+    <meta name="description" content="Vente de filaments 3D (PLA, ASA, TPU, ABS) et imprimantes 3D à Abidjan. Commandez vos matériaux de qualité professionnelle chez PrintDesign.ci">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap');
         body { font-family: 'Inter', sans-serif; background-color: #ffffff; }
+        /* Masquer la scrollbar des filtres sur mobile pour un look propre */
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
     </style>
 </head>
 <body class="pb-20">
@@ -26,29 +30,116 @@
         </div>
     </nav>
 
+    <!-- En-tête de confiance / Localisation Abidjan -->
+    <div class="bg-gray-50 border-b border-gray-100 py-3 px-6">
+        <div class="max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-between text-xs text-gray-500 gap-2">
+            <span>📍 Basé à Abidjan, Côte d'Ivoire — Matériel d'impression 3D</span>
+            <span class="font-medium text-black">Besoin d'un conseil ? Utilisez le guide des filaments ci-dessus ↗</span>
+        </div>
+    </div>
+
+    <!-- Filtres rapides par catégories (Chips) -->
+    <div class="max-w-5xl mx-auto px-6 mt-8">
+        <div id="filterChips" class="flex items-center gap-2 overflow-x-auto no-scrollbar pb-2">
+            <button onclick="filterCat('tous')" class="chip-btn active bg-black text-white px-4 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition">Tous les produits</button>
+            <!-- Les autres boutons de filtres s'ajouteront tout seul -->
+        </div>
+    </div>
+
     <!-- Contenu principal -->
-    <main id="mainContent" class="max-w-5xl mx-auto px-6 py-12 space-y-16">
+    <main id="mainContent" class="max-w-5xl mx-auto px-6 py-8 space-y-16">
     </main>
+
+    <!-- Fenêtre modale du Guide d'achat -->
+    <div id="guideModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl max-w-2xl w-full max-h-[85vh] overflow-y-auto p-6 sm:p-8 shadow-2xl relative">
+            <button onclick="closeGuide()" class="absolute top-6 right-6 text-gray-400 hover:text-black text-xl font-bold">✕</button>
+            
+            <h2 class="text-2xl font-bold mb-2">Guide des Filaments</h2>
+            <p class="text-gray-500 text-sm mb-6">Comment bien choisir votre matière selon votre projet d'impression 3D.</p>
+
+            <div class="space-y-6 text-sm">
+                <!-- Section Classique -->
+                <div class="bg-gray-50 p-5 rounded-2xl border border-gray-100">
+                    <h3 class="font-bold text-base mb-2 uppercase tracking-wide text-black">✨ Filaments Classiques (Débutants & Décoration)</h3>
+                    <ul class="space-y-2 text-gray-600">
+                        <li><strong>PLA :</strong> Le choix numéro un pour débuter, réaliser des figurines ou de la déco. Très facile à imprimer et sans odeur.</li>
+                        <li><strong>PLA Matte / Silk :</strong> Pour un rendu visuel haut de gamme (aspect mat anti-reflets ou brillant soyeux).</li>
+                    </ul>
+                </div>
+
+                <!-- Section Technique -->
+                <div class="bg-gray-50 p-5 rounded-2xl border border-gray-100">
+                    <h3 class="font-bold text-base mb-2 uppercase tracking-wide text-black">⚙️ Filaments Techniques (Projets Mécaniques & Extérieur)</h3>
+                    <p class="text-xs text-gray-500 mb-3">Ces matières offrent des performances exceptionnelles, mais nécessitent de petits réglages d'imprimante adaptés :</p>
+                    <ul class="space-y-2 text-gray-600">
+                        <li><strong>TPU :</strong> Souple et élastique (idéal pour les coques ou les joints). <em>Conseil : s'imprime lentement pour un résultat parfait.</em></li>
+                        <li><strong>ASA :</strong> Ultra-résistant aux UV et aux intempéries pour l'extérieur. <em>Conseil : demande une bonne ventilation de la pièce.</em></li>
+                        <li><strong>ABS :</strong> Très rigide et résistant à la chaleur. <em>Conseil : sensible aux courants d'air lors de l'impression.</em></li>
+                        <li><strong>Nylon / Carbone :</strong> Robustesse industrielle maximale. <em>Conseil : réservé aux utilisateurs expérimentés ou aux projets mécaniques lourds.</em></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="mt-8 text-center">
+                <button onclick="closeGuide()" class="bg-black text-white px-6 py-2.5 rounded-full text-sm font-semibold hover:bg-gray-800 transition">
+                    J'ai compris, retourner au catalogue
+                </button>
+            </div>
+        </div>
+    </div>
 
     <script>
         const url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTyVae43j0MEpWVeD2aoUIdOpE6QzgVPefeP5k0SCYnwvPGOJIuUqxEx4NIYY8jfXioJgrUpcEHH2uh/pub?output=csv";
         let allData = [];
+        let currentFilter = 'tous';
 
         Papa.parse(url, { download: true, header: true, complete: (res) => {
-            allData = res.data.filter(item => item.nom && item.nom.trim() !== ""); // Nettoyage immédiat
+            allData = res.data.filter(item => item.nom && item.nom.trim() !== "");
+            buildChips();
             render(allData);
         }});
 
+        function buildChips() {
+            const container = document.getElementById('filterChips');
+            const foundCategories = [...new Set(allData.map(p => p.Categorie ? p.Categorie.trim().toLowerCase() : 'autres'))];
+            const order = ['imprimante', 'classique', 'technique'];
+            const sorted = order.filter(c => foundCategories.includes(c)).concat(foundCategories.filter(c => !order.includes(c)));
+
+            sorted.forEach(cat => {
+                const btn = document.createElement('button');
+                btn.className = "chip-btn bg-gray-100 text-gray-700 hover:bg-gray-200 px-4 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition uppercase";
+                btn.textContent = cat;
+                btn.onclick = () => filterCat(cat);
+                container.appendChild(btn);
+            });
+        }
+
+        function filterCat(cat) {
+            currentFilter = cat;
+            document.querySelectorAll('.chip-btn').forEach(b => {
+                if((cat === 'tous' && b.textContent.includes('Tous')) || b.textContent.toLowerCase() === cat) {
+                    b.className = "chip-btn active bg-black text-white px-4 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition uppercase";
+                } else {
+                    b.className = "chip-btn bg-gray-100 text-gray-700 hover:bg-gray-200 px-4 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition uppercase";
+                }
+            });
+
+            if(cat === 'tous') {
+                render(allData);
+            } else {
+                const filtered = allData.filter(p => (p.Categorie ? p.Categorie.trim().toLowerCase() : 'autres') === cat);
+                renderFilteredOnly(filtered, cat);
+            }
+        }
+
         function render(items) {
             const main = document.getElementById('mainContent');
-            main.innerHTML = ''; // Nettoyage total avant affichage pour éviter les doublons
+            main.innerHTML = '';
 
             const order = ['imprimante', 'classique', 'technique'];
             const foundCategories = [...new Set(items.map(p => p.Categorie ? p.Categorie.trim().toLowerCase() : 'autres'))];
-            
-            // Ordre spécifique : Imprimante, Classique, Technique, puis le reste
-            const sortedCategories = order.filter(c => foundCategories.includes(c))
-                                    .concat(foundCategories.filter(c => !order.includes(c)));
+            const sortedCategories = order.filter(c => foundCategories.includes(c)).concat(foundCategories.filter(c => !order.includes(c)));
             
             sortedCategories.forEach(cat => {
                 const products = items.filter(p => (p.Categorie ? p.Categorie.trim().toLowerCase() : 'autres') === cat);
@@ -59,7 +150,8 @@
                     <h2 class="text-2xl font-bold mb-8 border-l-4 border-black pl-4 uppercase tracking-wider">${cat}</h2>
                     <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
                         ${products.map(p => `
-                            <div class="group cursor-pointer">
+                            <div class="group cursor-pointer relative">
+                                ${p.tag ? `<span class="absolute top-3 left-3 bg-black text-white text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider z-10">${p.tag}</span>` : ''}
                                 <div class="aspect-square bg-gray-100 rounded-2xl overflow-hidden mb-3">
                                     <img src="${p.image}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" onerror="this.src='https://images.unsplash.com/photo-1581091226825-a6a2a5aee158'">
                                 </div>
@@ -74,10 +166,44 @@
             });
         }
 
+        function renderFilteredOnly(products, catName) {
+            const main = document.getElementById('mainContent');
+            main.innerHTML = `
+                <section>
+                    <h2 class="text-2xl font-bold mb-8 border-l-4 border-black pl-4 uppercase tracking-wider">${catName}</h2>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+                        ${products.map(p => `
+                            <div class="group cursor-pointer relative">
+                                ${p.tag ? `<span class="absolute top-3 left-3 bg-black text-white text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider z-10">${p.tag}</span>` : ''}
+                                <div class="aspect-square bg-gray-100 rounded-2xl overflow-hidden mb-3">
+                                    <img src="${p.image}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" onerror="this.src='https://images.unsplash.com/photo-1581091226825-a6a2a5aee158'">
+                                </div>
+                                <h3 class="text-sm font-medium truncate">${p.nom}</h3>
+                                <p class="text-xs text-gray-400">${p.couleur || 'Standard'}</p>
+                                <p class="text-sm font-semibold mt-1">${p.prix}</p>
+                            </div>
+                        `).join('')}
+                    </div>
+                </section>
+            `;
+        }
+
+        function openGuide() {
+            document.getElementById('guideModal').classList.remove('hidden');
+        }
+        function closeGuide() {
+            document.getElementById('guideModal').classList.add('hidden');
+        }
+
         document.getElementById('search').addEventListener('input', (e) => {
             const q = e.target.value.toLowerCase();
             const filtered = allData.filter(p => p.nom.toLowerCase().includes(q) || (p.couleur && p.couleur.toLowerCase().includes(q)));
-            render(filtered);
+            if(currentFilter === 'tous') {
+                render(filtered);
+            } else {
+                const doublyFiltered = filtered.filter(p => (p.Categorie ? p.Categorie.trim().toLowerCase() : 'autres') === currentFilter);
+                renderFilteredOnly(doublyFiltered, currentFilter);
+            }
         });
     </script>
 </body>
