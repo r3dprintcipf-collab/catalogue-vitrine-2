@@ -13,6 +13,7 @@
 </head>
 <body class="pb-20">
 
+    <!-- Navigation unique en haut -->
     <nav class="sticky top-0 bg-white/95 backdrop-blur-sm border-b border-gray-100 z-50">
         <div class="max-w-5xl mx-auto px-6 py-4 flex items-center justify-between">
             <h1 class="text-xl font-bold tracking-tighter uppercase">PrintDesign.ci</h1>
@@ -20,8 +21,9 @@
         </div>
     </nav>
 
+    <!-- Contenu principal -->
     <main id="mainContent" class="max-w-5xl mx-auto px-6 py-12 space-y-16">
-        <!-- Les sections seront injectées ici -->
+        <!-- Les sections seront injectées ici proprement -->
     </main>
 
     <script>
@@ -36,11 +38,17 @@
         function render(items) {
             const main = document.getElementById('mainContent');
             
-            // Récupère dynamiquement toutes les catégories uniques présentes dans le tableau
-            const categories = [...new Set(items.map(p => p.Categorie ? p.Categorie.trim() : 'Autres'))];
+            // Ordre souhaité pour vos catégories
+            const desiredOrder = ['Imprimante', 'classique', 'technique'];
+            
+            // Récupère les catégories présentes
+            const foundCategories = [...new Set(items.map(p => p.Categorie ? p.Categorie.trim() : 'Autres'))];
+            
+            // Trie selon l'ordre personnalisé, puis le reste s'il y en a
+            const categories = desiredOrder.concat(foundCategories.filter(c => !desiredOrder.includes(c)));
             
             main.innerHTML = categories.map(cat => {
-                const productsInCat = items.filter(p => (p.Categorie ? p.Categorie.trim() : 'Autres') === cat);
+                const productsInCat = items.filter(p => (p.Categorie ? p.Categorie.trim() : 'Autres').toLowerCase() === cat.toLowerCase());
                 if (productsInCat.length === 0) return '';
 
                 return `
@@ -68,63 +76,6 @@
             const filtered = allData.filter(p => p.nom.toLowerCase().includes(q) || (p.couleur && p.couleur.toLowerCase().includes(q)));
             render(filtered);
         });
-    </script>
-</body>
-</html><!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PRINTDESIGN.CI | Catalogue</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap');
-        body { font-family: 'Inter', sans-serif; background-color: #ffffff; }
-    </style>
-</head>
-<body class="pb-20">
-
-    <nav class="sticky top-0 bg-white/95 backdrop-blur-sm border-b border-gray-100 z-50">
-        <div class="max-w-5xl mx-auto px-6 py-4 flex items-center justify-between">
-            <h1 class="text-xl font-bold tracking-tighter uppercase">PrintDesign.ci</h1>
-            <input type="text" id="search" placeholder="Rechercher..." class="bg-gray-50 border-0 rounded-full px-4 py-1.5 text-sm w-32 sm:w-64 focus:ring-2 focus:ring-black outline-none">
-        </div>
-    </nav>
-
-    <main id="mainContent" class="max-w-5xl mx-auto px-6 py-12 space-y-16">
-        <!-- Les sections seront injectées ici -->
-    </main>
-
-    <script>
-        const url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTyVae43j0MEpWVeD2aoUIdOpE6QzgVPefeP5k0SCYnwvPGOJIuUqxEx4NIYY8jfXioJgrUpcEHH2uh/pub?output=csv";
-        
-        Papa.parse(url, { download: true, header: true, complete: (res) => {
-            render(res.data);
-        }});
-
-        function render(items) {
-            const main = document.getElementById('mainContent');
-            const categories = ['Classique', 'Technique'];
-            
-            main.innerHTML = categories.map(cat => `
-                <section>
-                    <h2 class="text-2xl font-bold mb-8 border-l-4 border-black pl-4 uppercase tracking-wider">${cat}</h2>
-                    <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
-                        ${items.filter(p => p.Categorie === cat).map(p => `
-                            <div class="group cursor-pointer">
-                                <div class="aspect-square bg-gray-100 rounded-2xl overflow-hidden mb-3">
-                                    <img src="${p.image}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" onerror="this.src='https://images.unsplash.com/photo-1581091226825-a6a2a5aee158'">
-                                </div>
-                                <h3 class="text-sm font-medium truncate">${p.nom}</h3>
-                                <p class="text-xs text-gray-400">${p.couleur || 'Standard'}</p>
-                                <p class="text-sm font-semibold mt-1">${p.prix}</p>
-                            </div>
-                        `).join('')}
-                    </div>
-                </section>
-            `).join('');
-        }
     </script>
 </body>
 </html>
