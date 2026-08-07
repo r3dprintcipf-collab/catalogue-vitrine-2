@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="fr" class="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,32 +7,49 @@
     <meta name="description" content="Vente de filaments 3D (PLA, ASA, TPU, ABS) et imprimantes 3D à Abidjan. Commandez vos matériaux de qualité professionnelle chez PrintDesign.ci">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+        }
+    </script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap');
-        body { font-family: 'Inter', sans-serif; background-color: #ffffff; }
+        body { font-family: 'Inter', sans-serif; }
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
     </style>
 </head>
-<body class="pb-20">
+<body class="pb-20 bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 transition-colors duration-300">
 
-    <!-- Navigation épurée -->
-    <nav class="sticky top-0 bg-white/95 backdrop-blur-sm border-b border-gray-100 z-50">
+    <!-- Navigation -->
+    <nav class="sticky top-0 bg-white/95 dark:bg-zinc-950/95 backdrop-blur-sm border-b border-zinc-100 dark:border-zinc-800 z-50 transition-colors duration-300">
         <div class="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between gap-3">
             <h1 class="text-lg font-bold tracking-tighter uppercase">PrintDesign.ci</h1>
             <div class="flex items-center gap-2">
-                <button onclick="openGuide()" class="bg-gray-100 hover:bg-black hover:text-white transition px-3 py-1.5 rounded-full text-[11px] font-semibold uppercase tracking-wider whitespace-nowrap">
+                <!-- Bouton Dark Mode -->
+                <button onclick="toggleDarkMode()" class="bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 transition p-2 rounded-full text-xs" title="Changer le thème">
+                    <span id="themeIcon">🌙</span>
+                </button>
+                <button onclick="openGuide()" class="bg-zinc-100 dark:bg-zinc-800 hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black transition px-3 py-1.5 rounded-full text-[11px] font-semibold uppercase tracking-wider whitespace-nowrap">
                     💡 Guide
                 </button>
-                <input type="text" id="search" placeholder="Rechercher..." class="bg-gray-50 border border-gray-100 rounded-full px-3 py-1.5 text-xs w-28 sm:w-56 focus:ring-2 focus:ring-black outline-none">
+                <input type="text" id="search" placeholder="Rechercher..." class="bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-full px-3 py-1.5 text-xs w-28 sm:w-48 focus:ring-2 focus:ring-black dark:focus:ring-white outline-none transition-colors">
             </div>
         </div>
     </nav>
 
-    <!-- Filtres rapides par catégories (Chips) remontés pour un accès direct -->
+    <!-- Filtres par catégories (Chips) -->
     <div class="max-w-5xl mx-auto px-4 mt-4">
         <div id="filterChips" class="flex items-center gap-2 overflow-x-auto no-scrollbar pb-1">
-            <button onclick="filterCat('tous')" class="chip-btn active bg-black text-white px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition">Tous</button>
+            <button onclick="filterCat('tous')" class="cat-btn active bg-black text-white dark:bg-white dark:text-black px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition">Tous</button>
+        </div>
+    </div>
+
+    <!-- Filtres rapides par Couleur -->
+    <div class="max-w-5xl mx-auto px-4 mt-2">
+        <div id="colorChips" class="flex items-center gap-1.5 overflow-x-auto no-scrollbar pb-2 text-xs">
+            <span class="text-zinc-400 font-medium whitespace-nowrap mr-1">Couleur :</span>
+            <button onclick="filterColor('toutes')" class="color-btn active bg-zinc-200 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 px-3 py-1 rounded-full font-medium whitespace-nowrap transition">Toutes</button>
         </div>
     </div>
 
@@ -40,35 +57,35 @@
     <main id="mainContent" class="max-w-5xl mx-auto px-4 py-6 space-y-12">
     </main>
 
-    <!-- Pied de page propre contenant la localisation (sortie du haut de page) -->
-    <footer class="max-w-5xl mx-auto px-4 mt-16 pt-8 border-t border-gray-100 text-center text-xs text-gray-400 space-y-2">
+    <!-- Pied de page -->
+    <footer class="max-w-5xl mx-auto px-4 mt-16 pt-8 border-t border-zinc-100 dark:border-zinc-900 text-center text-xs text-zinc-400 space-y-2">
         <p>📍 Basé à Abidjan, Côte d'Ivoire — Matériel & Consommables d'impression 3D</p>
-        <p class="font-medium text-gray-600">PrintDesign.ci © 2026 — Tous droits réservés</p>
+        <p class="font-medium text-zinc-500 dark:text-zinc-400">PrintDesign.ci © 2026 — Tous droits réservés</p>
     </footer>
 
     <!-- Fenêtre modale du Guide d'achat -->
     <div id="guideModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-white rounded-3xl max-w-2xl w-full max-h-[85vh] overflow-y-auto p-6 sm:p-8 shadow-2xl relative">
-            <button onclick="closeGuide()" class="absolute top-6 right-6 text-gray-400 hover:text-black text-xl font-bold">✕</button>
+        <div class="bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 rounded-3xl max-w-2xl w-full max-h-[85vh] overflow-y-auto p-6 sm:p-8 shadow-2xl relative transition-colors">
+            <button onclick="closeGuide()" class="absolute top-6 right-6 text-zinc-400 hover:text-black dark:hover:text-white text-xl font-bold">✕</button>
             
             <h2 class="text-2xl font-bold mb-2">Guide des Filaments</h2>
-            <p class="text-gray-500 text-sm mb-6">Comment bien choisir votre matière selon votre projet d'impression 3D.</p>
+            <p class="text-zinc-500 dark:text-zinc-400 text-sm mb-6">Comment bien choisir votre matière selon votre projet d'impression 3D.</p>
 
             <div class="space-y-6 text-sm">
                 <!-- Section Classique -->
-                <div class="bg-gray-50 p-5 rounded-2xl border border-gray-100">
-                    <h3 class="font-bold text-base mb-2 uppercase tracking-wide text-black">✨ Filaments Classiques (Débutants & Décoration)</h3>
-                    <ul class="space-y-2 text-gray-600">
+                <div class="bg-zinc-50 dark:bg-zinc-800/50 p-5 rounded-2xl border border-zinc-100 dark:border-zinc-800">
+                    <h3 class="font-bold text-base mb-2 uppercase tracking-wide">✨ Filaments Classiques (Débutants & Décoration)</h3>
+                    <ul class="space-y-2 text-zinc-600 dark:text-zinc-300">
                         <li><strong>PLA :</strong> Le choix numéro un pour débuter, réaliser des figurines ou de la déco. Très facile à imprimer et sans odeur.</li>
                         <li><strong>PLA Matte / Silk :</strong> Pour un rendu visuel haut de gamme (aspect mat anti-reflets ou brillant soyeux).</li>
                     </ul>
                 </div>
 
                 <!-- Section Technique -->
-                <div class="bg-gray-50 p-5 rounded-2xl border border-gray-100">
-                    <h3 class="font-bold text-base mb-2 uppercase tracking-wide text-black">⚙️ Filaments Techniques (Projets Mécaniques & Extérieur)</h3>
-                    <p class="text-xs text-gray-500 mb-3">Ces matières offrent des performances exceptionnelles, mais nécessitent de petits réglages d'imprimante adaptés :</p>
-                    <ul class="space-y-2 text-gray-600">
+                <div class="bg-zinc-50 dark:bg-zinc-800/50 p-5 rounded-2xl border border-zinc-100 dark:border-zinc-800">
+                    <h3 class="font-bold text-base mb-2 uppercase tracking-wide">⚙️ Filaments Techniques (Projets Mécaniques & Extérieur)</h3>
+                    <p class="text-xs text-zinc-500 dark:text-zinc-400 mb-3">Ces matières offrent des performances exceptionnelles, mais nécessitent de petits réglages d'imprimante adaptés :</p>
+                    <ul class="space-y-2 text-zinc-600 dark:text-zinc-300">
                         <li><strong>TPU :</strong> Souple et élastique (idéal pour les coques ou les joints). <em>Conseil : s'imprime lentement pour un résultat parfait.</em></li>
                         <li><strong>ASA :</strong> Ultra-résistant aux UV et aux intempéries pour l'extérieur. <em>Conseil : demande une bonne ventilation de la pièce.</em></li>
                         <li><strong>ABS :</strong> Très rigide et résistant à la chaleur. <em>Conseil : sensible aux courants d'air lors de l'impression.</em></li>
@@ -78,7 +95,7 @@
             </div>
 
             <div class="mt-8 text-center">
-                <button onclick="closeGuide()" class="bg-black text-white px-6 py-2.5 rounded-full text-sm font-semibold hover:bg-gray-800 transition">
+                <button onclick="closeGuide()" class="bg-black text-white dark:bg-white dark:text-black px-6 py-2.5 rounded-full text-sm font-semibold hover:opacity-80 transition">
                     J'ai compris, retourner au catalogue
                 </button>
             </div>
@@ -89,12 +106,34 @@
         const url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTyVae43j0MEpWVeD2aoUIdOpE6QzgVPefeP5k0SCYnwvPGOJIuUqxEx4NIYY8jfXioJgrUpcEHH2uh/pub?output=csv";
         let allData = [];
         let currentFilter = 'tous';
+        let currentColor = 'toutes';
 
         Papa.parse(url, { download: true, header: true, complete: (res) => {
             allData = res.data.filter(item => item.nom && item.nom.trim() !== "");
             buildChips();
+            buildColorChips();
             render(allData);
         }});
+
+        function toggleDarkMode() {
+            const html = document.documentElement;
+            const icon = document.getElementById('themeIcon');
+            if (html.classList.contains('dark')) {
+                html.classList.remove('dark');
+                icon.textContent = '🌙';
+                localStorage.setItem('theme', 'light');
+            } else {
+                html.classList.add('dark');
+                icon.textContent = '☀️';
+                localStorage.setItem('theme', 'dark');
+            }
+        }
+
+        // Vérifier la préférence enregistrée
+        if (localStorage.getItem('theme') === 'dark') {
+            document.documentElement.classList.add('dark');
+            document.getElementById('themeIcon').textContent = '☀️';
+        }
 
         function buildChips() {
             const container = document.getElementById('filterChips');
@@ -104,32 +143,63 @@
 
             sorted.forEach(cat => {
                 const btn = document.createElement('button');
-                btn.className = "chip-btn bg-gray-100 text-gray-700 hover:bg-gray-200 px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition uppercase";
+                btn.className = "cat-btn bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-200 dark:hover:bg-zinc-700 px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition uppercase";
                 btn.textContent = cat;
                 btn.onclick = () => filterCat(cat);
                 container.appendChild(btn);
             });
         }
 
-        function filterCat(cat) {
-            currentFilter = cat;
-            document.querySelectorAll('.chip-btn').forEach(b => {
-                if((cat === 'tous' && b.textContent.includes('Tous')) || b.textContent.toLowerCase() === cat) {
-                    b.className = "chip-btn active bg-black text-white px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition uppercase";
-                } else {
-                    b.className = "chip-btn bg-gray-100 text-gray-700 hover:bg-gray-200 px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition uppercase";
-                }
+        function buildColorChips() {
+            const container = document.getElementById('colorChips');
+            const foundColors = [...new Set(allData.map(p => p.couleur ? p.couleur.trim() : '').filter(c => c !== ''))];
+            
+            foundColors.forEach(col => {
+                const btn = document.createElement('button');
+                btn.className = "color-btn bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 px-3 py-1 rounded-full font-medium whitespace-nowrap transition";
+                btn.textContent = col;
+                btn.onclick = () => filterColor(col);
+                container.appendChild(btn);
             });
-
-            if(cat === 'tous') {
-                render(allData);
-            } else {
-                const filtered = allData.filter(p => (p.Categorie ? p.Categorie.trim().toLowerCase() : 'autres') === cat);
-                renderFilteredOnly(filtered, cat);
-            }
         }
 
-        function render(items) {
+        function filterCat(cat) {
+            currentFilter = cat;
+            document.querySelectorAll('.cat-btn').forEach(b => {
+                if((cat === 'tous' && b.textContent.includes('Tous')) || b.textContent.toLowerCase() === cat) {
+                    b.className = "cat-btn active bg-black text-white dark:bg-white dark:text-black px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition uppercase";
+                } else {
+                    b.className = "cat-btn bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-200 dark:hover:bg-zinc-700 px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition uppercase";
+                }
+            });
+            applyFilters();
+        }
+
+        function filterColor(col) {
+            currentColor = col;
+            document.querySelectorAll('.color-btn').forEach(b => {
+                if((col === 'toutes' && b.textContent.includes('Toutes')) || b.textContent.toLowerCase() === col.toLowerCase()) {
+                    b.className = "color-btn active bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900 px-3 py-1 rounded-full font-medium whitespace-nowrap transition";
+                } else {
+                    b.className = "color-btn bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 px-3 py-1 rounded-full font-medium whitespace-nowrap transition";
+                }
+            });
+            applyFilters();
+        }
+
+        function applyFilters() {
+            const q = document.getElementById('search').value.toLowerCase();
+            let filtered = allData.filter(p => {
+                const matchSearch = p.nom.toLowerCase().includes(q) || (p.couleur && p.couleur.toLowerCase().includes(q));
+                const matchCat = currentFilter === 'tous' || (p.Categorie ? p.Categorie.trim().toLowerCase() : 'autres') === currentFilter;
+                const matchCol = currentColor === 'toutes' || (p.couleur && p.couleur.trim().toLowerCase() === currentColor.toLowerCase());
+                return matchSearch && matchCat && matchCol;
+            });
+
+            renderFiltered(filtered);
+        }
+
+        function renderFiltered(items) {
             const main = document.getElementById('mainContent');
             main.innerHTML = '';
 
@@ -137,22 +207,27 @@
             const foundCategories = [...new Set(items.map(p => p.Categorie ? p.Categorie.trim().toLowerCase() : 'autres'))];
             const sortedCategories = order.filter(c => foundCategories.includes(c)).concat(foundCategories.filter(c => !order.includes(c)));
             
+            if(items.length === 0) {
+                main.innerHTML = `<div class="text-center py-12 text-zinc-400 text-sm">Aucun produit ne correspond à votre recherche.</div>`;
+                return;
+            }
+
             sortedCategories.forEach(cat => {
                 const products = items.filter(p => (p.Categorie ? p.Categorie.trim().toLowerCase() : 'autres') === cat);
                 if (products.length === 0) return;
 
                 const section = document.createElement('section');
                 section.innerHTML = `
-                    <h2 class="text-xl font-bold mb-6 border-l-4 border-black pl-3 uppercase tracking-wider">${cat}</h2>
+                    <h2 class="text-xl font-bold mb-6 border-l-4 border-black dark:border-white pl-3 uppercase tracking-wider">${cat}</h2>
                     <div class="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
                         ${products.map(p => `
                             <div class="group cursor-pointer relative">
-                                ${p.tag ? `<span class="absolute top-2 left-2 bg-black text-white text-[9px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider z-10">${p.tag}</span>` : ''}
-                                <div class="aspect-square bg-gray-100 rounded-2xl overflow-hidden mb-2">
+                                ${p.tag ? `<span class="absolute top-2 left-2 bg-black text-white dark:bg-white dark:text-black text-[9px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider z-10">${p.tag}</span>` : ''}
+                                <div class="aspect-square bg-zinc-100 dark:bg-zinc-900 rounded-2xl overflow-hidden mb-2">
                                     <img src="${p.image}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" onerror="this.src='https://images.unsplash.com/photo-1581091226825-a6a2a5aee158'">
                                 </div>
                                 <h3 class="text-xs sm:text-sm font-medium truncate">${p.nom}</h3>
-                                <p class="text-[11px] text-gray-400">${p.couleur || 'Standard'}</p>
+                                <p class="text-[11px] text-zinc-400">${p.couleur || 'Standard'}</p>
                                 <p class="text-xs sm:text-sm font-semibold mt-0.5">${p.prix}</p>
                             </div>
                         `).join('')}
@@ -162,28 +237,6 @@
             });
         }
 
-        function renderFilteredOnly(products, catName) {
-            const main = document.getElementById('mainContent');
-            main.innerHTML = `
-                <section>
-                    <h2 class="text-xl font-bold mb-6 border-l-4 border-black pl-3 uppercase tracking-wider">${catName}</h2>
-                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
-                        ${products.map(p => `
-                            <div class="group cursor-pointer relative">
-                                ${p.tag ? `<span class="absolute top-2 left-2 bg-black text-white text-[9px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider z-10">${p.tag}</span>` : ''}
-                                <div class="aspect-square bg-gray-100 rounded-2xl overflow-hidden mb-2">
-                                    <img src="${p.image}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" onerror="this.src='https://images.unsplash.com/photo-1581091226825-a6a2a5aee158'">
-                                </div>
-                                <h3 class="text-xs sm:text-sm font-medium truncate">${p.nom}</h3>
-                                <p class="text-[11px] text-gray-400">${p.couleur || 'Standard'}</p>
-                                <p class="text-xs sm:text-sm font-semibold mt-0.5">${p.prix}</p>
-                            </div>
-                        `).join('')}
-                    </div>
-                </section>
-            `;
-        }
-
         function openGuide() {
             document.getElementById('guideModal').classList.remove('hidden');
         }
@@ -191,15 +244,8 @@
             document.getElementById('guideModal').classList.add('hidden');
         }
 
-        document.getElementById('search').addEventListener('input', (e) => {
-            const q = e.target.value.toLowerCase();
-            const filtered = allData.filter(p => p.nom.toLowerCase().includes(q) || (p.couleur && p.couleur.toLowerCase().includes(q)));
-            if(currentFilter === 'tous') {
-                render(filtered);
-            } else {
-                const doublyFiltered = filtered.filter(p => (p.Categorie ? p.Categorie.trim().toLowerCase() : 'autres') === currentFilter);
-                renderFilteredOnly(doublyFiltered, currentFilter);
-            }
+        document.getElementById('search').addEventListener('input', () => {
+            applyFilters();
         });
     </script>
 </body>
