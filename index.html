@@ -3,134 +3,73 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PRINTDESIGN.CI | Catalogue Professionnel</title>
+    <title>PRINTDESIGN.CI - Catalogue</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
-    <style>
-        body { font-family: 'Inter', system-ui, sans-serif; background-color: #f1f5f9; }
-        .product-card { transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
-        .product-card:hover { transform: scale(1.02); }
-    </style>
-</head>
-<body class="text-slate-900">
-
-    <header class="bg-white border-b border-slate-200 sticky top-0 z-50">
-        <div class="max-w-6xl mx-auto px-4 py-4 flex flex-col md:flex-row items-center justify-between gap-4">
-            <h1 class="text-2xl font-extrabold tracking-tighter text-blue-900">PRINTDESIGN.CI</h1>
-            <input type="text" id="search" placeholder="Rechercher un produit..." 
-                   class="w-full md:w-64 bg-slate-100 border-none rounded-xl px-4 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
-        </div>
-    </header>
-
-    <main class="max-w-6xl mx-auto px-4 py-8">
-        <div id="productGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-            <!-- Les produits s'injectent ici -->
-        </div>
-    </main>
-
-    <script>
-        const csvUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTyVae43j0MEpWVeD2aoUIdOpE6QzgVPefeP5k0SCYnwvPGOJIuUqxEx4NIYY8jfXioJgrUpcEHH2uh/pub?output=csv";
-        let products = [];
-
-        Papa.parse(csvUrl, {
-            download: true, header: true, skipEmptyLines: true,
-            complete: function(results) {
-                products = results.data;
-                render(products);
-            }
-        });
-
-        function render(data) {
-            const grid = document.getElementById('productGrid');
-            grid.innerHTML = data.map(p => `
-                <div class="product-card bg-white rounded-3xl p-3 shadow-sm border border-slate-100 flex flex-col">
-                    <div class="h-64 rounded-2xl overflow-hidden bg-slate-100 mb-4">
-                        <img src="${p.image}" class="w-full h-full object-cover" onerror="this.src='https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&w=500&q=80'">
-                    </div>
-                    <div class="px-2 flex-1">
-                        <h2 class="font-bold text-lg leading-tight">${p.nom}</h2>
-                        <p class="text-sm text-slate-500 mb-4">${p.couleur || ''}</p>
-                        <div class="flex items-center justify-between mt-auto pb-2">
-                            <span class="text-xl font-bold text-blue-600">${p.prix}</span>
-                            <button class="bg-slate-900 text-white px-4 py-2 rounded-xl text-sm font-semibold hover:bg-blue-600 transition">Détails</button>
-                        </div>
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        document.getElementById('search').addEventListener('input', (e) => {
-            const val = e.target.value.toLowerCase();
-            render(products.filter(p => p.nom.toLowerCase().includes(val)));
-        });
-    </script>
-</body>
-</html><!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PRINTDESIGN.CI - Catalogue & Vitrine</title>
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- PapaParse -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Inter', sans-serif; background-color: #f8fafc; }
         .product-card { transition: all 0.3s ease; }
-        .product-card:hover { transform: translateY(-4px); box-shadow: 0 12px 30px -10px rgba(0, 0, 0, 0.1); }
+        .product-card:hover { transform: translateY(-3px); box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.08); }
     </style>
 </head>
 <body class="text-slate-800 antialiased">
 
-    <!-- En-tête -->
     <header class="bg-white border-b border-slate-200 sticky top-0 z-50 shadow-sm">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex flex-col sm:flex-row items-center justify-between gap-4">
             <h1 class="text-xl font-bold tracking-tight text-slate-900">PRINTDESIGN.CI</h1>
+            <input type="text" id="search" placeholder="Rechercher un produit..." 
+                   class="w-full sm:w-72 bg-slate-100 border border-slate-200 rounded-full px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-slate-900">
         </div>
     </header>
 
-    <!-- Contenu principal -->
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div id="productGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"></div>
     </main>
 
-    <!-- Script de chargement Google Sheets -->
     <script>
         const csvUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTyVae43j0MEpWVeD2aoUIdOpE6QzgVPefeP5k0SCYnwvPGOJIuUqxEx4NIYY8jfXioJgrUpcEHH2uh/pub?output=csv";
+        let allProducts = [];
 
         Papa.parse(csvUrl, {
-            download: true, 
-            header: true, 
-            skipEmptyLines: true,
+            download: true, header: true, skipEmptyLines: true,
             complete: function(results) {
-                const grid = document.getElementById('productGrid');
-                grid.innerHTML = '';
-                
-                results.data.forEach(product => {
-                    const nom = product.nom || '';
-                    const couleur = product.couleur ? `(${product.couleur})` : '';
-                    const prix = product.prix || '';
-                    const image = product.image || '';
-
-                    const card = document.createElement('div');
-                    card.className = "product-card bg-white rounded-2xl border border-slate-200 overflow-hidden flex flex-col max-w-sm w-full";
-                    card.innerHTML = `
-                        <!-- Image en plein cadre avec object-cover -->
-                        <div class="bg-slate-100 h-60 w-full overflow-hidden relative">
-                            <img src="${image}" class="w-full h-full object-cover" onerror="this.src='https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&w=500&q=80'">
-                        </div>
-                        <div class="p-4 flex-1 flex flex-col justify-between">
-                            <div>
-                                <h3 class="font-semibold text-sm text-slate-900">${nom} <span class="text-slate-500 font-normal">${couleur}</span></h3>
-                            </div>
-                            <p class="font-bold text-slate-900 text-lg mt-4">${prix}</p>
-                        </div>
-                    `;
-                    grid.appendChild(card);
-                });
+                allProducts = results.data;
+                renderProducts(allProducts);
             }
+        });
+
+        function renderProducts(items) {
+            const grid = document.getElementById('productGrid');
+            grid.innerHTML = '';
+            
+            items.forEach(product => {
+                const nom = product.nom || '';
+                const couleur = product.couleur ? `(${product.couleur})` : '';
+                const prix = product.prix || '';
+                const image = product.image || '';
+
+                const card = document.createElement('div');
+                card.className = "product-card bg-white rounded-2xl border border-slate-200 overflow-hidden flex flex-col max-w-sm w-full mx-auto";
+                card.innerHTML = `
+                    <div class="bg-slate-100 h-56 w-full overflow-hidden relative">
+                        <img src="${image}" class="w-full h-full object-cover" onerror="this.src='https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&w=500&q=80'">
+                    </div>
+                    <div class="p-4 flex-1 flex flex-col justify-between">
+                        <div>
+                            <h3 class="font-semibold text-sm text-slate-900">${nom} <span class="text-slate-500 font-normal">${couleur}</span></h3>
+                        </div>
+                        <p class="font-bold text-slate-900 text-lg mt-4">${prix}</p>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        document.getElementById('search').addEventListener('input', (e) => {
+            const term = e.target.value.toLowerCase();
+            const filtered = allProducts.filter(p => (p.nom && p.nom.toLowerCase().includes(term)) || (p.couleur && p.couleur.toLowerCase().includes(term)));
+            renderProducts(filtered);
         });
     </script>
 </body>
